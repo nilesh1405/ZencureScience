@@ -1,6 +1,6 @@
 import home from "../assets/images/home.png";
 import doctor from "../assets/images/doctor.png";
-import employee from "../assets/images/profileMenuImage.png";
+import employee from "../assets/images/ProfileMenuImage.png";
 import product from "../assets/images/productIcon.png";
 import sale from "../assets/images/salesIcon.png";
 
@@ -37,6 +37,6 @@ const sales = {
 export const sidebarMenus = {
   OWNER: [dashboard, doctors, employees, products, sales],
   RBM: [dashboard, doctors, employees, products, sales],
-  ABM: [dashboard, doctors, employees,products, sales],
+  ABM: [dashboard, doctors, employees, products, sales],
   EMPLOYEE: [dashboard, doctors, products, sales],
 };
