@@ -59,7 +59,7 @@ export default function Notification() {
               )}
 
               <div className="min-w-0">
-                <h3 className="font-semibold text-base sm:text-lg break-words">
+                <h3 className="font-semibold text-base sm:text-lg break-word">
                   {event.name}
                 </h3>
 
