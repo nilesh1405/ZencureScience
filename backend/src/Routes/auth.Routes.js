@@ -5,17 +5,22 @@ import {
   addUser,
   updatepassword,
 } from "../Controllers/auth.Controller.js";
+
 import { arcjetMiddleware } from "../middlewares/arcjet.middleware.js";
 import {
-  authorizeRoles,
   protectedRoute,
+  authorizeRoles,
 } from "../middlewares/auth.middleware.js";
+
 const authRouter = express.Router();
 
 authRouter.use(arcjetMiddleware);
-authRouter.use(protectedRoute);
-authRouter.post("/addUser", addUser);
 authRouter.post("/login", login);
-authRouter.post("/logout", logout);
-authRouter.put("/updatepassword", updatepassword);
+
+authRouter.post("/logout", protectedRoute, logout);
+
+authRouter.put("/updatepassword", protectedRoute, updatepassword);
+
+authRouter.post("/addUser", protectedRoute, addUser);
+
 export default authRouter;
