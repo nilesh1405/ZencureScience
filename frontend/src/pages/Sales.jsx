@@ -108,7 +108,7 @@ export default function Sales() {
 
           {employees.map((e) => (
             <option key={e._id} value={e._id}>
-              {e.name}
+              {` ${e.name} (${e.role}) `}
             </option>
           ))}
         </select>

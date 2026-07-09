@@ -98,7 +98,7 @@ const router = createBrowserRouter([
   {
     path: "/sales/addSale",
     element: (
-      <ProtectedRoute allowedRoles={["OWNER", "RBM", "ABM", "EMPLOYEE"]}>
+      <ProtectedRoute allowedRoles={["EMPLOYEE"]}>
         <Structure>
           <AddSale />
         </Structure>

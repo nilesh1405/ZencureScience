@@ -24,7 +24,7 @@ export default function SideBar() {
     >
       <div
         className={`
-    p-4 transition-opacity duration-200
+    xl:p-4 xl:transition-opacity xl:duration-200 
   `}
       >
         {menus.map((menu) => (

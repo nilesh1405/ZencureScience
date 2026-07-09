@@ -11,6 +11,7 @@ import {
   validateName,
   validatePhone,
 } from "../lib/validator.js";
+import { sendEmployeeCredentials } from "../lib/mail.js";
 
 export const addEmployee = async (req, res) => {
   try {
@@ -67,8 +68,6 @@ export const addEmployee = async (req, res) => {
       dateOfJoining,
     };
 
-    // ================= OWNER -> RBM =================
-
     if (role === "OWNER") {
       if (!location.state) {
         return res.status(400).json({
@@ -97,10 +96,7 @@ export const addEmployee = async (req, res) => {
       employeeData.location = {
         state: location.state,
       };
-    }
-
-    // ================= RBM -> ABM =================
-    else if (role === "RBM") {
+    } else if (role === "RBM") {
       if (!location.assignedCities || location.assignedCities.length === 0) {
         return res.status(400).json({
           message: "ABM must have at least one assigned city.",
@@ -126,15 +122,11 @@ export const addEmployee = async (req, res) => {
       employeeData.role = "ABM";
       employeeData.RBM = employeeId;
 
-      // ABM inherits RBM's state
       employeeData.location = {
         state: rbm.location.state,
         assignedCities: uniqueCities,
       };
-    }
-
-    // ================= ABM -> EMPLOYEE =================
-    else if (role === "ABM") {
+    } else if (role === "ABM") {
       if (!location.city) {
         return res.status(400).json({
           message: "Employee must belong to one city.",
@@ -159,7 +151,6 @@ export const addEmployee = async (req, res) => {
       employeeData.ABM = employeeId;
       employeeData.RBM = abm.RBM;
 
-      // Employee inherits ABM's state
       employeeData.location = {
         state: abm.location.state,
         city: location.city,
@@ -184,7 +175,16 @@ export const addEmployee = async (req, res) => {
       employeeId: newEmployee._id,
       role: newEmployee.role,
     });
-
+    try {
+      await sendEmployeeCredentials({
+        email: employeeData.contactInfo.email,
+        name: employeeData.name,
+        username,
+        password,
+      });
+    } catch (err) {
+      console.log("Couldn't send email:", err);
+    }
     if (!newUser) {
       await Employee.findByIdAndDelete(newEmployee._id);
 
@@ -196,10 +196,6 @@ export const addEmployee = async (req, res) => {
     res.status(201).json({
       message: "Employee & User created successfully",
       employee: newEmployee,
-      credentials: {
-        username,
-        password,
-      },
     });
   } catch (error) {
     console.error("Error in addEmployee:", error);
@@ -431,6 +427,13 @@ export const findEmployees = async (req, res) => {
 
 export const getAssignedCities = async (req, res) => {
   try {
+    if (req.user.role === "OWNER") {
+      const cities = await Employee.distinct("location.city", {
+        "location.city": { $exists: true, $ne: "" },
+      });
+
+      return res.json({ cities });
+    }
     const employee = await Employee.findById(req.user.employeeId);
 
     if (!employee) {

@@ -17,6 +17,9 @@ export default function EmployeeCard({ employee }) {
         <p>
           <strong>Email:</strong> {employee.contactInfo?.email || "N/A"}
         </p>
+        <p>
+          <strong>Role:</strong> {employee.role || "N/A"}
+        </p>
       </div>
     </div>
   );
